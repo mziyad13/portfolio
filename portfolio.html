@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ziyad Makroum – Cybersécurité</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c14;
+  --bg2: #0d1320;
+  --bg3: #111827;
+  --accent: #00e5ff;
+  --accent2: #ff4d6d;
+  --accent3: #a78bfa;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --border: rgba(0,229,255,0.12);
+  --glow: 0 0 30px rgba(0,229,255,0.15);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s;
+  box-shadow: 0 0 12px var(--accent);
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(0,229,255,0.4);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: all 0.15s ease-out;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.4;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(8,12,20,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text2);
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+  text-transform: uppercase;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* HERO */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 120px 60px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridPan 20s linear infinite;
+}
+@keyframes gridPan { to { background-position: 60px 60px; } }
+
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-tag::before {
+  content: '';
+  display: block;
+  width: 40px; height: 1px;
+  background: var(--accent);
+}
+
+.hero-name {
+  font-size: clamp(52px, 8vw, 100px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -3px;
+  margin-bottom: 16px;
+}
+.hero-name .line1 { color: var(--text); }
+.hero-name .line2 {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(0,229,255,0.4);
+}
+
+.hero-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  color: var(--text2);
+  margin-bottom: 40px;
+  line-height: 1.8;
+}
+.hero-title span { color: var(--accent); }
+
+.hero-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+}
+.badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  letter-spacing: 1px;
+  background: rgba(0,229,255,0.04);
+  transition: all 0.2s;
+}
+.badge:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0,229,255,0.08);
+}
+.badge.red { border-color: rgba(255,77,109,0.3); color: var(--accent2); background: rgba(255,77,109,0.05); }
+.badge.purple { border-color: rgba(167,139,250,0.3); color: var(--accent3); background: rgba(167,139,250,0.05); }
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.btn-primary:hover {
+  background: #fff;
+  box-shadow: 0 0 30px rgba(0,229,255,0.4);
+}
+.btn-secondary {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  text-decoration: none;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.hero-stats {
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  z-index: 2;
+}
+.stat {
+  text-align: right;
+}
+.stat-num {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* SECTIONS */
+section {
+  padding: 100px 60px;
+  position: relative;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 60px;
+}
+.section-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+.section-title {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ABOUT */
+#about { background: var(--bg2); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.about-text p {
+  color: var(--text2);
+  line-height: 1.9;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.about-text p span { color: var(--accent); font-weight: 700; }
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.info-item {
+  padding: 20px;
+  border: 1px solid var(--border);
+  background: rgba(0,229,255,0.02);
+}
+.info-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.info-value {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* SKILLS */
+#skills { background: var(--bg); }
+.skills-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.skill-card {
+  padding: 32px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.skill-card:hover::before { transform: scaleX(1); }
+.skill-card:hover {
+  border-color: rgba(0,229,255,0.3);
+  box-shadow: var(--glow);
+  transform: translateY(-4px);
+}
+.skill-card.red-card::before { background: var(--accent2); }
+.skill-card.red-card:hover { border-color: rgba(255,77,109,0.3); box-shadow: 0 0 30px rgba(255,77,109,0.1); }
+.skill-card.purple-card::before { background: var(--accent3); }
+.skill-card.purple-card:hover { border-color: rgba(167,139,250,0.3); box-shadow: 0 0 30px rgba(167,139,250,0.1); }
+.skill-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.skill-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  background: rgba(0,229,255,0.06);
+  border: 1px solid rgba(0,229,255,0.1);
+  color: var(--text2);
+  letter-spacing: 0.5px;
+}
+.tag.red { background: rgba(255,77,109,0.06); border-color: rgba(255,77,109,0.1); color: #ff8fa3; }
+.tag.purple { background: rgba(167,139,250,0.06); border-color: rgba(167,139,250,0.1); color: #c4b5fd; }
+
+/* PROJECTS */
+#projects { background: var(--bg2); }
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.project-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 40px;
+  align-items: start;
+  padding: 40px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.project-item:hover {
+  border-color: rgba(0,229,255,0.25);
+  background: rgba(0,229,255,0.03);
+}
+.project-item.red:hover { border-color: rgba(255,77,109,0.25); background: rgba(255,77,109,0.03); }
+.project-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  padding-top: 4px;
+}
+.project-content {}
+.project-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.project-type.red { color: var(--accent2); }
+.project-type.purple { color: var(--accent3); }
+.project-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.project-desc {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+.project-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.project-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+.project-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 1px;
+}
+.project-arrow {
+  font-size: 20px;
+  color: var(--border);
+  margin-top: 16px;
+  transition: all 0.2s;
+}
+.project-item:hover .project-arrow { color: var(--accent); transform: translateX(4px); }
+
+/* COURSES */
+#courses { background: var(--bg); }
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.course-category {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 28px;
+  transition: all 0.3s;
+}
+.course-category:hover {
+  border-color: rgba(0,229,255,0.2);
+  transform: translateY(-2px);
+}
+.course-cat-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.course-cat-title.red { color: var(--accent2); }
+.course-cat-title.purple { color: var(--accent3); }
+.course-cat-title.green { color: #4ade80; }
+.course-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.course-list li {
+  font-size: 13px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.course-list li::before {
+  content: '→';
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* TIMELINE */
+#experience { background: var(--bg2); }
+.timeline {
+  position: relative;
+  padding-left: 40px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 50px;
+  padding-left: 40px;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -44px; top: 6px;
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent);
+}
+.timeline-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.timeline-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.timeline-sub {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.timeline-desc {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.8;
+}
+
+/* CONTACT */
+#contact { background: var(--bg); }
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.contact-text h3 {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+.contact-text h3 span { color: var(--accent); }
+.contact-text p {
+  color: var(--text2);
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: all 0.2s;
+  background: var(--bg2);
+}
+.contact-link:hover {
+  border-color: var(--accent);
+  transform: translateX(8px);
+}
+.contact-link-icon {
+  font-size: 20px;
+  width: 40px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.contact-link-info {}
+.contact-link-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.contact-link-value {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* FOOTER */
+footer {
+  padding: 40px 60px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg);
+}
+.footer-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 1px;
+}
+.footer-accent { color: var(--accent); }
+
+/* SCROLL REVEAL */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); }
+
+@media (max-width: 1024px) {
+  nav { padding: 20px 30px; }
+  section { padding: 80px 30px; }
+  #hero { padding: 120px 30px 80px; }
+  .hero-stats { display: none; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .skills-container { grid-template-columns: repeat(2, 1fr); }
+  .courses-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .project-item { grid-template-columns: 60px 1fr; }
+  .project-meta { display: none; }
+  footer { flex-direction: column; gap: 16px; text-align: center; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">ZM_portfolio</div>
+  <ul class="nav-links">
+    <li><a href="#about">Profil</a></li>
+    <li><a href="#skills">Compétences</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#courses">Formation</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Bachelor Cybersécurité · EPITA Campus Cyber · Promo 2027</div>
+    <h1 class="hero-name">
+      <div class="line1">MAKROUM</div>
+      <div class="line2">ZIYAD</div>
+    </h1>
+    <div class="hero-title">
+      <span>Étudiant en cybersécurité</span> passionné par la sécurité offensive & défensive<br>
+      SOC · Pentest Web · Forensique · Conteneurisation · OT/ICS<br>
+      Recherche une <span>alternance septembre 2026</span> — Île-de-France
+    </div>
+    <div class="hero-badges">
+      <span class="badge">SOC N1/N2</span>
+      <span class="badge">Forensique</span>
+      <span class="badge">Kubernetes</span>
+      <span class="badge red">Red Team</span>
+      <span class="badge red">Pentest Web</span>
+      <span class="badge purple">Blue Team</span>
+      <span class="badge purple">Falco · Trivy</span>
+      <span class="badge">MITRE ATT&CK</span>
+      <span class="badge">Python</span>
+      <span class="badge">Active Directory</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">Me contacter</a>
+      <a href="#projects" class="btn-secondary">Voir mes projets</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">3+</div>
+      <div class="stat-label">projets techniques</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">20+</div>
+      <div class="stat-label">cours spécialisés</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">B2</div>
+      <div class="stat-label">anglais technique</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Profil</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>Étudiant en <span>Bachelor Cybersécurité à EPITA</span> (Campus Cyber, partenariat École Polytechnique), je me forme aux deux faces de la cybersécurité : offensive et défensive. Mon cursus m'a permis de pratiquer concrètement la forensique numérique, le pentest web, la sécurisation des conteneurs et les infrastructures Active Directory.</p>
+      <p>J'ai réalisé un <span>TP Red Team / Blue Team complet</span> sur infrastructure Kubernetes K3S — en tant que Red Team, j'ai exploité une faille RCE, pivoté entre pods et mis en place une persistance discrète. Ma compréhension des deux côtés me permet d'adopter une approche complète de la sécurité.</p>
+      <p>Curieux, rigoureux et autonome, j'apprécie les environnements techniques exigeants où l'apprentissage est constant. Je cherche une <span>alternance à partir de septembre 2026</span> (rythme 2 semaines entreprise / 1 semaine école) en Île-de-France.</p>
+    </div>
+    <div class="info-grid reveal">
+      <div class="info-item">
+        <div class="info-label">Formation</div>
+        <div class="info-value">Bachelor Cybersécurité</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">École</div>
+        <div class="info-value">EPITA Campus Cyber</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Promotion</div>
+        <div class="info-value">2027</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Localisation</div>
+        <div class="info-value">Région parisienne</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Anglais</div>
+        <div class="info-value">B2 Technique</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Permis</div>
+        <div class="info-value">Permis B ✓</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Disponibilité</div>
+        <div class="info-value">Septembre 2026</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Rythme</div>
+        <div class="info-value">2 sem. / 1 sem.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Compétences</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-container">
+    <div class="skill-card red-card reveal">
+      <div class="skill-icon">🎯</div>
+      <div class="skill-title">SOC & Gestion des incidents</div>
+      <div class="skill-tags">
+        <span class="tag red">Analyse alertes N1/N2</span>
+        <span class="tag red">Investigation forensique</span>
+        <span class="tag red">MITRE ATT&CK</span>
+        <span class="tag red">Kill chain</span>
+        <span class="tag red">CTI (notions)</span>
+        <span class="tag red">IoC identification</span>
+        <span class="tag red">Veille cyber</span>
+        <span class="tag red">SIEM/SOAR (notions)</span>
+        <span class="tag red">Remédiation</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🔬</div>
+      <div class="skill-title">Forensique numérique</div>
+      <div class="skill-tags">
+        <span class="tag">KAPE</span>
+        <span class="tag">RegistryExplorer</span>
+        <span class="tag">MFTECmd</span>
+        <span class="tag">AmcacheParser</span>
+        <span class="tag">Artefacts Windows</span>
+        <span class="tag">SAM · MFT · Registre</span>
+        <span class="tag">Prefetch</span>
+        <span class="tag">Timeline incident</span>
+        <span class="tag">Rapport structuré</span>
+      </div>
+    </div>
+    <div class="skill-card red-card reveal">
+      <div class="skill-icon">⚔️</div>
+      <div class="skill-title">Pentest Web & Offensif</div>
+      <div class="skill-tags">
+        <span class="tag red">Burp Suite (actif)</span>
+        <span class="tag red">OWASP Top 10</span>
+        <span class="tag red">SQLi</span>
+        <span class="tag red">XSS</span>
+        <span class="tag red">Logique applicative</span>
+        <span class="tag red">PortSwigger Academy</span>
+        <span class="tag red">Exploitation RCE</span>
+        <span class="tag red">Pivot latéral</span>
+        <span class="tag red">Persistance</span>
+      </div>
+    </div>
+    <div class="skill-card purple-card reveal">
+      <div class="skill-icon">🐳</div>
+      <div class="skill-title">Conteneurisation & Sécurité</div>
+      <div class="skill-tags">
+        <span class="tag purple">Docker</span>
+        <span class="tag purple">Kubernetes</span>
+        <span class="tag purple">Helm · Kustomize</span>
+        <span class="tag purple">Trivy</span>
+        <span class="tag purple">Falco</span>
+        <span class="tag purple">Cosign</span>
+        <span class="tag purple">Kubescape</span>
+        <span class="tag purple">NetworkPolicies</span>
+        <span class="tag purple">RBAC</span>
+        <span class="tag purple">CTF escape –privileged</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-title">Réseaux & Systèmes</div>
+      <div class="skill-tags">
+        <span class="tag">TCP/IP · DNS · HTTP</span>
+        <span class="tag">SMTP · UDP · OSI</span>
+        <span class="tag">VLAN · Routage</span>
+        <span class="tag">Wireshark</span>
+        <span class="tag">Nmap</span>
+        <span class="tag">GNS3</span>
+        <span class="tag">Windows Server</span>
+        <span class="tag">Linux (admin)</span>
+        <span class="tag">Firewall · Proxy · WAF</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🗂️</div>
+      <div class="skill-title">Active Directory & IAM</div>
+      <div class="skill-tags">
+        <span class="tag">AD DS · DNS · GPO</span>
+        <span class="tag">OU Management</span>
+        <span class="tag">PowerShell automation</span>
+        <span class="tag">Relations inter-forêts</span>
+        <span class="tag">dcdiag</span>
+        <span class="tag">Zero Trust</span>
+        <span class="tag">IAM</span>
+        <span class="tag">Moindre privilège</span>
+      </div>
+    </div>
+    <div class="skill-card purple-card reveal">
+      <div class="skill-icon">📊</div>
+      <div class="skill-title">Monitoring & Observabilité</div>
+      <div class="skill-tags">
+        <span class="tag purple">Grafana</span>
+        <span class="tag purple">Prometheus</span>
+        <span class="tag purple">Loki</span>
+        <span class="tag purple">Stack GLP</span>
+        <span class="tag purple">Node Exporter</span>
+        <span class="tag purple">KPI sécurité</span>
+        <span class="tag purple">Tableaux de bord SOC</span>
+        <span class="tag purple">Reporting</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">💻</div>
+      <div class="skill-title">Scripting & Développement</div>
+      <div class="skill-tags">
+        <span class="tag">Python</span>
+        <span class="tag">PowerShell</span>
+        <span class="tag">Java</span>
+        <span class="tag">C</span>
+        <span class="tag">SQL</span>
+        <span class="tag">Bash</span>
+        <span class="tag">Git</span>
+        <span class="tag">Documentation technique</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">☁️</div>
+      <div class="skill-title">Cloud & Gouvernance</div>
+      <div class="skill-tags">
+        <span class="tag">AWS/Azure/GCP (notions)</span>
+        <span class="tag">IaaS · PaaS · SaaS</span>
+        <span class="tag">RGPD</span>
+        <span class="tag">NIS2</span>
+        <span class="tag">ISO 27001 (notions)</span>
+        <span class="tag">EBIOS RM (notions)</span>
+        <span class="tag">PSSI</span>
+        <span class="tag">Analyse de risques</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Projets</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-list">
+
+    <div class="project-item reveal">
+      <div class="project-num">01</div>
+      <div class="project-content">
+        <div class="project-type red">Red Team / Blue Team</div>
+        <div class="project-name">Infrastructure K3S — Attaque & Défense Kubernetes</div>
+        <div class="project-desc">
+          Déploiement d'une infrastructure 3 VM Debian : routeur, node K3S (Kubernetes), serveur Git/Registry. En tant que <strong>Red Team</strong>, j'ai exploité une faille RCE via <code>next_rce_exploit.py</code>, pivoté entre pods, accédé à une application interne (notes-app) et mis en place une persistance discrète (CronJob, backdoor, clé SSH). En <strong>Blue Team</strong>, mise en place d'un stack monitoring complet (Grafana/Prometheus/Loki), détection runtime avec Falco, audit Trivy/Kubescape, remédiation.
+        </div>
+        <div class="project-stack">
+          <span class="tag red">RCE Exploitation</span>
+          <span class="tag red">Pivot latéral</span>
+          <span class="tag red">CronJob backdoor</span>
+          <span class="tag purple">Falco runtime detection</span>
+          <span class="tag purple">Grafana/Prometheus</span>
+          <span class="tag purple">Trivy · Kubescape</span>
+          <span class="tag">Kubernetes · K3S</span>
+          <span class="tag">Helm · Kustomize</span>
+          <span class="tag">Docker</span>
+          <span class="tag">NetworkPolicies · RBAC</span>
+        </div>
+      </div>
+      <div class="project-meta">
+        <div class="project-date">EPITA · 2025</div>
+        <div class="project-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="project-num">02</div>
+      <div class="project-content">
+        <div class="project-type">Forensique Numérique</div>
+        <div class="project-name">Investigation d'incident — Compromission par ingénierie sociale</div>
+        <div class="project-desc">
+          Investigation complète d'un incident de compromission réel : un utilisateur avait ouvert un mail de phishing contenant une macro malveillante (.docm) qui avait installé un malware avec persistance via AutoRun. Reconstitution complète de la chaîne d'infection, analyse des artefacts Windows (SAM, MFT, registre, prefetch), identification des IoC, rédaction d'un rapport structuré avec timeline détaillée et recommandations de remédiation.
+        </div>
+        <div class="project-stack">
+          <span class="tag">KAPE</span>
+          <span class="tag">RegistryExplorer</span>
+          <span class="tag">MFTECmd</span>
+          <span class="tag">AmcacheParser</span>
+          <span class="tag">SAM · MFT · Registre</span>
+          <span class="tag">Prefetch analysis</span>
+          <span class="tag">IoC identification</span>
+          <span class="tag">Kill chain</span>
+          <span class="tag">MITRE ATT&CK</span>
+        </div>
+      </div>
+      <div class="project-meta">
+        <div class="project-date">EPITA · 2025</div>
+        <div class="project-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="project-num">03</div>
+      <div class="project-content">
+        <div class="project-type purple">Infrastructure Active Directory</div>
+        <div class="project-name">AD Multi-sites — New York, Paris, Londres</div>
+        <div class="project-desc">
+          Déploiement et administration d'une infrastructure Active Directory multi-domaines couvrant trois sites géographiques. Mise en place des services AD DS, DNS, GPO de sécurité, Unités Organisationnelles, automatisation de la création de 150+ comptes via PowerShell, configuration des relations d'approbation inter-forêts, diagnostic avec dcdiag. Documentation technique complète du projet.
+        </div>
+        <div class="project-stack">
+          <span class="tag purple">Active Directory DS</span>
+          <span class="tag purple">DNS · GPO sécurité</span>
+          <span class="tag purple">Relations inter-forêts</span>
+          <span class="tag">PowerShell (150+ comptes)</span>
+          <span class="tag">Windows Server 2019</span>
+          <span class="tag">TCP/IP</span>
+          <span class="tag">VirtualBox</span>
+          <span class="tag">dcdiag</span>
+        </div>
+      </div>
+      <div class="project-meta">
+        <div class="project-date">EPITA · S3</div>
+        <div class="project-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="project-num">04</div>
+      <div class="project-content">
+        <div class="project-type red">Pentest Web</div>
+        <div class="project-name">Labs Web Security — SQLi, XSS, Auth Bypass</div>
+        <div class="project-desc">
+          Pratique active des labs PortSwigger Web Security Academy : injection SQL (WHERE clause, login bypass), Cross-Site Scripting (reflected, stored, DOM), bypass d'authentification, logique applicative, tests d'API. Utilisation de Burp Suite comme proxy d'interception. TP XSS assigné par un professeur sur injection dans contexte JavaScript string. Niveau Apprentice/Practitioner atteint.
+        </div>
+        <div class="project-stack">
+          <span class="tag red">Burp Suite</span>
+          <span class="tag red">SQLi (WHERE, login bypass)</span>
+          <span class="tag red">XSS (reflected, stored, DOM)</span>
+          <span class="tag red">Auth bypass</span>
+          <span class="tag red">API testing</span>
+          <span class="tag">OWASP Top 10</span>
+          <span class="tag">PortSwigger Academy</span>
+        </div>
+      </div>
+      <div class="project-meta">
+        <div class="project-date">2024–2025</div>
+        <div class="project-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="project-num">05</div>
+      <div class="project-content">
+        <div class="project-type">Programmation Système</div>
+        <div class="project-name">Minishell C — Interpréteur Unix inspiré TCSH</div>
+        <div class="project-desc">
+          Développement en C d'un interpréteur de commandes Unix inspiré de TCSH. Implémentation de la boucle REPL (Read-Eval-Print Loop), du parser de commandes basé sur strtok, de la gestion des pipes et redirections, de l'exécution de processus via fork/exec, et de la gestion des variables d'environnement. Projet académique EPITA.
+        </div>
+        <div class="project-stack">
+          <span class="tag">C</span>
+          <span class="tag">REPL loop</span>
+          <span class="tag">Parser (strtok)</span>
+          <span class="tag">Fork/exec</span>
+          <span class="tag">Pipes & redirections</span>
+          <span class="tag">Variables d'environnement</span>
+          <span class="tag">Unix/Linux</span>
+        </div>
+      </div>
+      <div class="project-meta">
+        <div class="project-date">EPITA · S2</div>
+        <div class="project-arrow">→</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COURSES -->
+<section id="courses">
+  <div class="section-header reveal">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Formation</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="timeline reveal" style="margin-bottom: 60px;">
+    <div class="timeline-item">
+      <div class="timeline-date">Septembre 2024 → Juin 2027</div>
+      <div class="timeline-title">Bachelor Cybersécurité</div>
+      <div class="timeline-sub">EPITA (Campus Cyber) · Partenariat École Polytechnique · Puteaux (92)</div>
+      <div class="timeline-desc">Formation d'excellence en cybersécurité couvrant les domaines offensif et défensif, les systèmes, réseaux et programmation avancée.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">Février 2026 → Mai 2026</div>
+      <div class="timeline-title">Semestre International</div>
+      <div class="timeline-sub">EPITECH University · Barcelone, Espagne</div>
+      <div class="timeline-desc">Cours techniques dispensés entièrement en anglais. Environnement international multiculturel.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">Septembre 2023 → Juin 2024</div>
+      <div class="timeline-title">Licence Mathématiques</div>
+      <div class="timeline-sub">Université de Lorraine · Metz</div>
+      <div class="timeline-desc">Mathématiques appliquées, raisonnement logique et algorithmique.</div>
+    </div>
+  </div>
+
+  <div class="courses-grid reveal">
+    <div class="course-category">
+      <div class="course-cat-title red">Sécurité Offensive</div>
+      <ul class="course-list">
+        <li>Pentest Web (XSS, SQLi, Auth)</li>
+        <li>Reverse Engineering</li>
+        <li>Analyse de Malwares</li>
+        <li>Assembleur x86/x64</li>
+        <li>Exploitation & CTF</li>
+        <li>OSINT</li>
+      </ul>
+    </div>
+    <div class="course-category">
+      <div class="course-cat-title purple">Sécurité Défensive</div>
+      <ul class="course-list">
+        <li>Forensique Numérique</li>
+        <li>Analyse d'incidents</li>
+        <li>Virtualisation & Conteneurs</li>
+        <li>Active Directory</li>
+        <li>Windows (admin & sécurité)</li>
+        <li>Cryptographie</li>
+      </ul>
+    </div>
+    <div class="course-category">
+      <div class="course-cat-title">Infrastructure & Réseaux</div>
+      <ul class="course-list">
+        <li>Réseaux (intro + avancé)</li>
+        <li>Linux (intro + admin)</li>
+        <li>Architecture des systèmes</li>
+        <li>Cloud (IaaS/PaaS/SaaS)</li>
+        <li>Électronique</li>
+        <li>Administration systèmes</li>
+      </ul>
+    </div>
+    <div class="course-category">
+      <div class="course-cat-title green">Programmation</div>
+      <ul class="course-list">
+        <li>C / C avancé</li>
+        <li>Python & Python Sécurité</li>
+        <li>Java (POO)</li>
+        <li>SQL & Bases de données</li>
+        <li>Web</li>
+        <li>Algorithmique</li>
+      </ul>
+    </div>
+    <div class="course-category">
+      <div class="course-cat-title">Sciences & Maths</div>
+      <ul class="course-list">
+        <li>Cryptographie arithmétique</li>
+        <li>Complexité algorithmique</li>
+        <li>Théorie des graphes</li>
+        <li>Probabilités</li>
+        <li>Électronique</li>
+        <li>Arithmétique modulaire</li>
+      </ul>
+    </div>
+    <div class="course-category">
+      <div class="course-cat-title purple">Gouvernance & Droit</div>
+      <ul class="course-list">
+        <li>Droit du numérique</li>
+        <li>RGPD & conformité</li>
+        <li>NIS2 (notions)</li>
+        <li>ISO 27001 (notions)</li>
+        <li>EBIOS Risk Manager</li>
+        <li>Anglais technique (3 niveaux)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Contact</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-text reveal">
+      <h3>Parlons<br><span>cybersécurité</span></h3>
+      <p>Je recherche activement une alternance en cybersécurité à partir de septembre 2026 en Île-de-France. SOC, pentest, Blue Team, forensique ou cybersécurité industrielle — je suis motivé et prêt à apprendre.</p>
+      <a href="mailto:ziyad.makroum@epita.fr" class="btn-primary">ziyad.makroum@epita.fr</a>
+    </div>
+    <div class="contact-links reveal">
+      <a href="mailto:ziyad.makroum@epita.fr" class="contact-link">
+        <div class="contact-link-icon">✉️</div>
+        <div class="contact-link-info">
+          <div class="contact-link-label">Email</div>
+          <div class="contact-link-value">ziyad.makroum@epita.fr</div>
+        </div>
+      </a>
+      <a href="tel:+33781208440" class="contact-link">
+        <div class="contact-link-icon">📞</div>
+        <div class="contact-link-info">
+          <div class="contact-link-label">Téléphone</div>
+          <div class="contact-link-value">07 81 20 84 40</div>
+        </div>
+      </a>
+      <a href="https://linkedin.com/in/ziyad-makroum-9846982ba" target="_blank" class="contact-link">
+        <div class="contact-link-icon">💼</div>
+        <div class="contact-link-info">
+          <div class="contact-link-label">LinkedIn</div>
+          <div class="contact-link-value">linkedin.com/in/ziyad-makroum</div>
+        </div>
+      </a>
+      <div class="contact-link">
+        <div class="contact-link-icon">📍</div>
+        <div class="contact-link-info">
+          <div class="contact-link-label">Localisation</div>
+          <div class="contact-link-value">Louvres (95) · Île-de-France</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">© 2026 <span class="footer-accent">Makroum Ziyad</span> · Bachelor Cybersécurité EPITA</div>
+  <div class="footer-text">Construit avec <span class="footer-accent">HTML/CSS/JS</span> · Portfolio personnel</div>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  ring.style.left = ringX + 'px';
+  ring.style.top = ringY + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .project-item, .skill-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+    ring.style.transform = 'translate(-50%, -50%) scale(1.5)';
+    ring.style.borderColor = 'rgba(0,229,255,0.6)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+    ring.style.transform = 'translate(-50%, -50%) scale(1)';
+    ring.style.borderColor = 'rgba(0,229,255,0.4)';
+  });
+});
+
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+
+// HERO GLITCH EFFECT ON NAME
+const heroName = document.querySelector('.hero-name');
+let glitchInterval;
+heroName.addEventListener('mouseenter', () => {
+  let count = 0;
+  glitchInterval = setInterval(() => {
+    heroName.style.transform = `translate(${(Math.random()-0.5)*4}px, ${(Math.random()-0.5)*2}px)`;
+    if(count++ > 8) { clearInterval(glitchInterval); heroName.style.transform = ''; }
+  }, 50);
+});
+
+// TYPING EFFECT IN HERO TAG
+const tagEl = document.querySelector('.hero-tag');
+const originalText = 'Bachelor Cybersécurité · EPITA Campus Cyber · Promo 2027';
+let typed = 0;
+tagEl.textContent = '';
+tagEl.style.borderLeft = '2px solid var(--accent)';
+const typeInterval = setInterval(() => {
+  tagEl.textContent = originalText.slice(0, typed++);
+  if(typed > originalText.length) {
+    clearInterval(typeInterval);
+    tagEl.style.borderLeft = 'none';
+  }
+}, 40);
+
+// COUNTER ANIMATION
+function animateCounter(el, target, suffix = '') {
+  let count = 0;
+  const step = target / 40;
+  const interval = setInterval(() => {
+    count = Math.min(count + step, target);
+    el.textContent = Math.floor(count) + suffix;
+    if(count >= target) clearInterval(interval);
+  }, 30);
+}
+const statNums = document.querySelectorAll('.stat-num');
+const statsObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      const targets = ['3', '20', 'B2'];
+      const suffixes = ['+', '+', ''];
+      statNums.forEach((el, i) => {
+        if(i < 2) animateCounter(el, parseInt(targets[i]), suffixes[i]);
+      });
+      statsObs.disconnect();
+    }
+  });
+});
+if(statNums[0]) statsObs.observe(statNums[0]);
+
+// NAV ACTIVE STATE
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav-links a');
+  let current = '';
+  sections.forEach(s => {
+    if(window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  links.forEach(l => {
+    l.style.color = l.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+  });
+});
+</script>
+</body>
+</html>
